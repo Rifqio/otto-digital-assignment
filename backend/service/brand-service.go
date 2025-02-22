@@ -11,9 +11,9 @@ type BrandService struct {
 }
 
 // NewBrandService is a function to create new BrandService
-func NewBrandService(brandRepository repositories.BrandRepository) *BrandService {
+func NewBrandService() *BrandService {
 	return &BrandService{
-		brandRepository: brandRepository,
+		brandRepository: repositories.NewBrandRepository(),
 	}
 }
 

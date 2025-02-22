@@ -29,6 +29,14 @@ func SuccessResponse(c echo.Context, message string, data interface{}) error {
 	})
 }
 
+// CreatedResponse sends a created response
+func CreatedResponse(c echo.Context, message string) error {
+	return c.JSON(http.StatusCreated, BaseResponse{
+		Success: true,
+		Message: message,
+	})
+}
+
 // ErrorResponse sends an error response
 func ErrorResponse(c echo.Context, statusCode int, message string) error {
 	return c.JSON(statusCode, BaseResponse{

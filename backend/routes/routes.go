@@ -2,7 +2,6 @@ package routes
 
 import (
 	"voucher-app/handler"
-	"voucher-app/repositories"
 	"voucher-app/service"
 
 	"github.com/labstack/echo/v4"
@@ -22,8 +21,7 @@ type Router struct {
 
 // MakeRouter creates a new router
 func MakeRouter() Router {
-	brandRepository := repositories.NewBrandRepository()
-	brandService := service.NewBrandService(brandRepository)
+	brandService := service.NewBrandService()
 	brandHandler := handler.NewBrandHandler(brandService)
 
 	voucherService := service.NewVoucherService()
