@@ -1,37 +1,47 @@
+import { forwardRef } from "react";
 import { GreetingFormValues } from "../../../schema/greeting-form.schema";
 
-export const GreetingCardPreview: React.FC<{ formValues: Partial<GreetingFormValues> }> = ({ formValues }) => {
+export const GreetingCardPreview = forwardRef<
+    HTMLDivElement,
+    { formValues: Partial<GreetingFormValues> }
+>(({ formValues }, ref) => {
     return (
-        <div className="w-full aspect-square relative bg-[#FFF5EB] rounded-lg overflow-hidden">
+        <div ref={ref} className="aspect-square relative">
             {formValues.card && (
-                <img 
-                    src={URL.createObjectURL(formValues.card[0])} 
-                    alt="Preview" 
+                <img
+                    src={URL.createObjectURL(formValues.card[0])}
+                    alt="Preview"
                     className="absolute inset-0 w-full h-full object-cover"
                 />
             )}
-            
-            <div className="absolute inset-0 p-8 flex flex-col">
-                <div className="space-y-4">
-                    {formValues.dear && (
-                        <p className="text-lg font-serif absolute left-52 top-36">
+
+            <div className="absolute inset-0">
+                {formValues.dear && (
+                    <div
+                        className={`absolute top-[30%]  left-[45%] transform -translate-y-1/2`}
+                    >
+                        <p className="text-xs md:text-lg sm:text-sm font-serif">
                             {formValues.dear}
                         </p>
-                    )}
-                    {formValues.message && (
-                        <div className="mt-4 whitespace-pre-wrap font-serif text-lg absolute left-32 top-40">
+                    </div>
+                )}
+
+                {formValues.message && (
+                    <div className="absolute top-[38%] left-[30%] w-1/2">
+                        <p className="md:text-lg sm:text-sm text-xs whitespace-pre-wrap font-serif">
                             {formValues.message}
-                        </div>
-                    )}
-                    {formValues.from && (
-                        <div className="mt-auto pt-8">
-                            <p className="text-xl font-serif absolute left-48 bottom-44">
-                                {formValues.from}
-                            </p>
-                        </div>
-                    )}
-                </div>
+                        </p>
+                    </div>
+                )}
+
+                {formValues.from && (
+                    <div className="absolute bottom-[41%] left-[41%]">
+                        <p className="md:text-lg sm:text-sm font-serif text-xs">
+                            {formValues.from}
+                        </p>
+                    </div>
+                )}
             </div>
         </div>
     );
-};
+});

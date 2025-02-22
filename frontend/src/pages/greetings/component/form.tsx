@@ -1,7 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { zodResolver } from "@hookform/resolvers/zod";
+import html2canvas from "html2canvas";
+import { useRef } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { Button } from "../../../components/ui/button";
 import FileUpload from "../../../components/ui/file-upload";
 import {
@@ -29,21 +29,37 @@ export function GreetingCardForm() {
             from: "",
         },
     });
-
-    function onSubmit(values: z.infer<typeof greetingFormSchema>) {
-        console.log(values);
-    }
-
     const watch = form.watch();
+    const previewRef = useRef<HTMLDivElement>(null);
 
+    async function onSubmit() {
+        if (!previewRef.current) return;
+
+        await new Promise((resolve) => setTimeout(resolve, 100));
+
+        const canvas = await html2canvas(previewRef.current, {
+            backgroundColor: null,
+            scale: 2,
+            useCORS: true,
+            logging: false,
+            allowTaint: true,
+            scrollX: 0,
+            scrollY: 0,
+        });
+
+        const image = canvas.toDataURL("image/png", 1.0);
+
+        const link = document.createElement("a");
+        link.href = image;
+        link.download = "greeting-card.png";
+        link.click();
+    }
     return (
         <div className="max-w-2xl mx-auto p-6">
             <div className="space-y-8">
-                <div className="rounded-lg overflow-hidden shadow-lg mb-8">
-                    {watch.card && (
-                        <GreetingCardPreview formValues={watch} />
-                    )}
-                </div>
+                {watch.card && (
+                    <GreetingCardPreview ref={previewRef} formValues={watch} />
+                )}
 
                 <Form {...form}>
                     <form
@@ -64,7 +80,7 @@ export function GreetingCardForm() {
                                     <FormItem>
                                         <FormLabel>Dear</FormLabel>
                                         <FormControl>
-                                            <Input {...field} maxLength={50} />
+                                            <Input {...field} maxLength={20} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -79,7 +95,7 @@ export function GreetingCardForm() {
                                         <FormControl>
                                             <Textarea
                                                 {...field}
-                                                maxLength={50}
+                                                maxLength={45}
                                                 className="min-h-[100px]"
                                             />
                                         </FormControl>
@@ -94,7 +110,7 @@ export function GreetingCardForm() {
                                     <FormItem>
                                         <FormLabel>From</FormLabel>
                                         <FormControl>
-                                            <Input {...field} maxLength={50} />
+                                            <Input {...field} maxLength={20} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -105,7 +121,10 @@ export function GreetingCardForm() {
                         <hr className="my-6" />
 
                         <div className="flex justify-center">
-                            <Button type="submit" className="bg-green-500">
+                            <Button
+                                type="submit"
+                                className="bg-green-500 hover:cursor-pointer hover:bg-green-800"
+                            >
                                 Download
                             </Button>
                         </div>
