@@ -22,7 +22,7 @@ const FileUpload = <TFormValues extends FieldValues>({
     label,
 }: FileUploadProps<TFormValues>) => {
     const [isDragging, setIsDragging] = useState<boolean>(false);
-    const [thumbnailSrc, setThumbnailSrc] = useState<string>("");
+    // const [thumbnailSrc, setThumbnailSrc] = useState<string>("");
     const [fileName, setFileName] = useState<string>("");
 
     const handleFileChange = (files: FileList | null): void => {
@@ -34,7 +34,7 @@ const FileUpload = <TFormValues extends FieldValues>({
                 const img = new Image();
                 img.src = e.target?.result as string;
                 setFileName(file.name);
-                setThumbnailSrc(img.src);
+                // setThumbnailSrc(img.src);
             };
             reader.readAsDataURL(file);
             form.setValue(
@@ -67,7 +67,7 @@ const FileUpload = <TFormValues extends FieldValues>({
 
     return (
         <div className="space-y-4">
-            {thumbnailSrc && (
+            {/* {thumbnailSrc && (
                 <div className="flex justify-center">
                     <img
                         src={thumbnailSrc}
@@ -75,7 +75,7 @@ const FileUpload = <TFormValues extends FieldValues>({
                         className="max-w-full h-1/2 object-cover rounded-lg"
                     />
                 </div>
-            )}
+            )} */}
 
             <FormField
                 control={form.control}
