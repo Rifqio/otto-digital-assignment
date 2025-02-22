@@ -18,10 +18,11 @@ func NewBrandService() *BrandService {
 }
 
 // CreateBrand is a function to create brand
-func (b BrandService) CreateBrand(data dto.CreateBrandRequest) error {
-	err := b.brandRepository.InsertBrand()
+func (b *BrandService) CreateBrand(data dto.CreateBrandRequest) error {
+	err := b.brandRepository.InsertBrand(data)
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
