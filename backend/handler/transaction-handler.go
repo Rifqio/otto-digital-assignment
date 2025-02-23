@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"strconv"
 	"strings"
 	"voucher-app/dto"
 	"voucher-app/service"
@@ -52,15 +51,13 @@ func (t *TransactionHandler) GetRedemptionTransactionDetail(e echo.Context) erro
 		return utils.ErrorResponse(e, 400, "Transaction ID is required")
 	}
 
-	parsedTransactionID, err := strconv.Atoi(transactionID)
+	transaction, err := t.transactionService.GetRedemptionTransactionDetail(transactionID)
 	if err != nil {
-		return utils.ErrorResponse(e, 400, "Transaction ID must be a number")
-	}
-
-	err = t.transactionService.GetRedemptionTransactionDetail(parsedTransactionID)
-	if err != nil {
+		if err.Error() == "record not found" {
+			return utils.ErrorResponse(e, 404, "Transaction not found")
+		}
 		return utils.ErrorResponse(e, 500, err.Error())
 	}
 
-	return utils.SuccessResponse(e, "Redemption transaction detail retrieved", nil)
+	return utils.SuccessResponse(e, "Redemption transaction detail retrieved", transaction)
 }

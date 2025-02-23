@@ -69,8 +69,10 @@ func (t *TransactionService) CreateRedemptionTransaction(data dto.CreateTransact
 		pointsRedeemed := voucher.Point * quantity
 		totalPoints += pointsRedeemed
 
-		// Insert into transaction_history
+		// TRX-<customer_id>-<voucher_id>-<timestamp>
+		trxID := fmt.Sprintf("TRX-%d-%d-%d", customer.ID, voucher.ID, currentTime.Unix())
 		transactionHistory := repositories.TransactionHistory{
+			ID:             trxID,
 			VoucherID:      voucher.ID,
 			UserID:         customer.ID,
 			PointsRedeemed: pointsRedeemed,
@@ -88,6 +90,15 @@ func (t *TransactionService) CreateRedemptionTransaction(data dto.CreateTransact
 }
 
 // GetRedemptionTransactionDetail is a function to get redemption transaction detail
-func (t *TransactionService) GetRedemptionTransactionDetail(id int) error {
-	return nil
+func (t *TransactionService) GetRedemptionTransactionDetail(id string) (*repositories.TransactionHistory, error) {
+	transaction, err := t.transactionRepository.FindTransactionHistoryByID(id)
+	if err != nil {
+		return nil, err
+	}
+
+	if transaction == nil {
+		return nil, errors.New("transaction not found")
+	}
+
+	return transaction, nil
 }
