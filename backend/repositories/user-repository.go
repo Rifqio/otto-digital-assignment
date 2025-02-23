@@ -6,36 +6,34 @@ import (
 	"gorm.io/gorm"
 )
 
-// User is a struct to represent the model
+// User represents the model for users
 type User struct {
 	ID        uint      `json:"id" gorm:"primaryKey;autoincrement"`
-	Email     string    `json:"email" gorm:"unique;notnull"`
-	FullName  string    `json:"fullName" gorm:"notnull"`
+	Email     string    `json:"email" gorm:"unique;not null"`
+	FullName  string    `json:"fullName" gorm:"not null"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
 }
 
-// UserRepository is a struct to represent repository of brand
-type UserRepository struct {
+// UserRepository defines the interface for user repository operations
+type UserRepository interface {
+	FindUserByEmail(email string) (*User, error)
+}
+
+// userRepositoryImpl is the concrete implementation of UserRepository
+type userRepositoryImpl struct {
 	db *gorm.DB
 }
 
-// NewUserRepository is a function to create new UserRepository
+// NewUserRepository creates a new instance of UserRepository
 func NewUserRepository(db *gorm.DB) UserRepository {
-	return UserRepository{
-		db: db,
-	}
+	return &userRepositoryImpl{db: db}
 }
 
-// InsertUser is a function to insert user
-func (b UserRepository) InsertUser() error {
-	return nil
-}
-
-// FindUserByEmail is a function to find user by email
-func (b UserRepository) FindUserByEmail(email string) (*User, error) {
+// FindUserByEmail finds a user by email
+func (u *userRepositoryImpl) FindUserByEmail(email string) (*User, error) {
 	var user User
-	err := b.db.Where("email = ?", email).First(&user).Error
+	err := u.db.Where("email = ?", email).First(&user).Error
 
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {

@@ -7,7 +7,7 @@ import (
 	"gorm.io/gorm"
 )
 
-// Voucher is a struct to represent the model
+// Voucher represents the voucher model
 type Voucher struct {
 	ID        uint      `json:"id" gorm:"primaryKey;autoincrement"`
 	Code      string    `json:"code" gorm:"unique;not null"`
@@ -19,20 +19,27 @@ type Voucher struct {
 	UpdatedAt time.Time `json:"updatedAt"`
 }
 
-// VoucherRepository is a struct to represent repository of brand
-type VoucherRepository struct {
+// VoucherRepository defines the interface for voucher repository operations
+type VoucherRepository interface {
+	InsertVoucher(data dto.CreateVoucherRequest) error
+	FindVoucherByCode(code string) (*Voucher, error)
+	FindVoucherByBrand(brandID int) (*[]Voucher, error)
+	FindVouchersByCodes(codes []string) ([]Voucher, error)
+	FindVoucherByID(id int) (*Voucher, error)
+}
+
+// voucherRepositoryImpl is the concrete implementation of VoucherRepository
+type voucherRepositoryImpl struct {
 	db *gorm.DB
 }
 
-// NewVoucherRepository is a function to create new VoucherRepository
+// NewVoucherRepository creates a new instance of VoucherRepository
 func NewVoucherRepository(db *gorm.DB) VoucherRepository {
-	return VoucherRepository{
-		db: db,
-	}
+	return &voucherRepositoryImpl{db: db}
 }
 
-// InsertVoucher is a function to insert brand
-func (b VoucherRepository) InsertVoucher(data dto.CreateVoucherRequest) error {
+// InsertVoucher inserts a new voucher record into the database
+func (v *voucherRepositoryImpl) InsertVoucher(data dto.CreateVoucherRequest) error {
 	voucher := Voucher{
 		Code:      data.Code,
 		Point:     data.Point,
@@ -42,47 +49,47 @@ func (b VoucherRepository) InsertVoucher(data dto.CreateVoucherRequest) error {
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}
-	result := b.db.Create(&voucher)
+	result := v.db.Create(&voucher)
 	if result.Error != nil {
 		return result.Error
 	}
 	return nil
 }
 
-// FindVoucherByCode is a function to find voucher by code
-func (b VoucherRepository) FindVoucherByCode(code string) (*Voucher, error) {
+// FindVoucherByCode retrieves a voucher by its code
+func (v *voucherRepositoryImpl) FindVoucherByCode(code string) (*Voucher, error) {
 	var voucher Voucher
-	result := b.db.Where("code = ?", code).First(&voucher)
+	result := v.db.Where("code = ?", code).First(&voucher)
 	if result.Error != nil {
 		return nil, result.Error
 	}
 	return &voucher, nil
 }
 
-// FindVoucherByBrand is a function to find voucher by brand
-func (b VoucherRepository) FindVoucherByBrand(brandID int) (*[]Voucher, error) {
+// FindVoucherByBrand retrieves vouchers associated with a specific brand
+func (v *voucherRepositoryImpl) FindVoucherByBrand(brandID int) (*[]Voucher, error) {
 	var vouchers []Voucher
-	result := b.db.Where("brand_id = ?", brandID).Find(&vouchers)
+	result := v.db.Where("brand_id = ?", brandID).Find(&vouchers)
 	if result.Error != nil {
 		return nil, result.Error
 	}
 	return &vouchers, nil
 }
 
-// FindVouchersByCodes retrieves multiple vouchers based on a slice of voucher codes.
-func (b VoucherRepository) FindVouchersByCodes(codes []string) ([]Voucher, error) {
+// FindVouchersByCodes retrieves multiple vouchers based on a list of voucher codes
+func (v *voucherRepositoryImpl) FindVouchersByCodes(codes []string) ([]Voucher, error) {
 	var vouchers []Voucher
-	result := b.db.Where("code IN (?)", codes).Find(&vouchers)
+	result := v.db.Where("code IN (?)", codes).Find(&vouchers)
 	if result.Error != nil {
 		return nil, result.Error
 	}
 	return vouchers, nil
 }
 
-// FindVoucherByID is a function to find voucher by ID
-func (b VoucherRepository) FindVoucherByID(id int) (*Voucher, error) {
+// FindVoucherByID retrieves a voucher by its ID
+func (v *voucherRepositoryImpl) FindVoucherByID(id int) (*Voucher, error) {
 	var voucher Voucher
-	result := b.db.Where("id = ?", id).First(&voucher)
+	result := v.db.Where("id = ?", id).First(&voucher)
 	if result.Error != nil {
 		return nil, result.Error
 	}

@@ -2,7 +2,7 @@ package repositories
 
 import "gorm.io/gorm"
 
-// TransactionHistory is a struct to represent the model
+// TransactionHistory represents the model for transaction history
 type TransactionHistory struct {
 	ID             string `json:"id" gorm:"primaryKey"`
 	VoucherID      uint   `json:"voucherId" gorm:"not null"`
@@ -12,20 +12,24 @@ type TransactionHistory struct {
 	UpdatedAt      int    `json:"updatedAt" gorm:"not null"`
 }
 
-// TransactionRepository is a struct to represent repository of brand
-type TransactionRepository struct {
+// TransactionRepository defines the methods that the repository must implement
+type TransactionRepository interface {
+	CreateTransactionHistory(data TransactionHistory) error
+	FindTransactionHistoryByID(id string) (*TransactionHistory, error)
+}
+
+// transactionRepositoryImpl is the concrete implementation of TransactionRepository
+type transactionRepositoryImpl struct {
 	db *gorm.DB
 }
 
-// NewTransactionRepository is a function to create new TransactionRepository
+// NewTransactionRepository creates a new instance of TransactionRepository
 func NewTransactionRepository(db *gorm.DB) TransactionRepository {
-	return TransactionRepository{
-		db: db,
-	}
+	return &transactionRepositoryImpl{db: db}
 }
 
 // CreateTransactionHistory inserts a record into the transaction_history table
-func (t TransactionRepository) CreateTransactionHistory(data TransactionHistory) error {
+func (t *transactionRepositoryImpl) CreateTransactionHistory(data TransactionHistory) error {
 	result := t.db.Create(&data)
 	if result.Error != nil {
 		return result.Error
@@ -34,7 +38,7 @@ func (t TransactionRepository) CreateTransactionHistory(data TransactionHistory)
 }
 
 // FindTransactionHistoryByID finds a transaction history by its ID
-func (t TransactionRepository) FindTransactionHistoryByID(id string) (*TransactionHistory, error) {
+func (t *transactionRepositoryImpl) FindTransactionHistoryByID(id string) (*TransactionHistory, error) {
 	var transactionHistory TransactionHistory
 	err := t.db.Where("id = ?", id).First(&transactionHistory).Error
 

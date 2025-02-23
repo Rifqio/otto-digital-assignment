@@ -10,7 +10,6 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-// MockBrandRepository is a mock implementation of BrandRepository
 type MockBrandRepository struct {
 	mock.Mock
 }
