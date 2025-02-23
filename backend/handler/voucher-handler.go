@@ -79,12 +79,12 @@ func (v *VoucherHandler) GetVoucherByBrand(e echo.Context) error {
 		return utils.ErrorResponse(e, 400, "Brand ID must be a number")
 	}
 
-	voucher, err := v.voucherService.GetVoucherByBrand(parsedBrandID)
+	vouchers, err := v.voucherService.GetVoucherByBrand(parsedBrandID)
 	if err != nil {
 		if err.Error() == "voucher not found" {
 			return utils.ErrorResponse(e, 404, err.Error())
 		}
 		return utils.ErrorResponse(e, 500, err.Error())
 	}
-	return utils.SuccessResponse(e, "Voucher Fetched", voucher)
+	return utils.SuccessResponse(e, "Voucher Fetched", vouchers)
 }
