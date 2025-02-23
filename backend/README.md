@@ -49,6 +49,15 @@ Prerequisites
     ```
     go run main.go
     ```
+  
+## Docker Installation
+    1. Make sure docker engine is already running
+    2. Run this command on the backend project directorys
+    ```
+    docker-compose up
+    ```
+
+
 ## API Reference
 
 #### Base Response
