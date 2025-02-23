@@ -58,3 +58,15 @@ func (b VoucherRepository) FindVoucherByCode(code string) (*Voucher, error) {
 	}
 	return &voucher, nil
 }
+
+// FindVoucherByBrand is a function to find voucher by brand
+func (b VoucherRepository) FindVoucherByBrand(brandID int) (*Voucher, error) {
+	var voucher Voucher
+	result := b.db.Where("brand_id = ?", brandID).Find(&voucher)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return &voucher, nil
+}

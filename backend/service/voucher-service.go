@@ -52,6 +52,15 @@ func (v VoucherService) GetVoucher(id int) error {
 }
 
 // GetVoucherByBrand is a function to get voucher by brand
-func (v VoucherService) GetVoucherByBrand(brandID int) error {
-	return nil
+func (v VoucherService) GetVoucherByBrand(brandID int) (*repositories.Voucher, error) {
+	voucher, err := v.voucherRepository.FindVoucherByBrand(brandID)
+	if err != nil {
+		return nil, err
+	}
+
+	if voucher == nil {
+		return nil, errors.New("voucher not found")
+	}
+
+	return voucher, nil
 }
