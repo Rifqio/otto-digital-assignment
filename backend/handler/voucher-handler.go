@@ -57,8 +57,14 @@ func (v *VoucherHandler) GetVoucher(e echo.Context) error {
 		return utils.ErrorResponse(e, 400, "Voucher ID must be a number")
 	}
 
-	err = v.voucherService.GetVoucher(parsedVoucherID)
-	return nil
+	voucher, err := v.voucherService.GetVoucher(parsedVoucherID)
+	if err != nil {
+		if err.Error() == "voucher not found" {
+			return utils.ErrorResponse(e, 404, err.Error())
+		}
+		return utils.ErrorResponse(e, 500, err.Error())
+	}
+	return utils.SuccessResponse(e, "Voucher Fetched", voucher)
 }
 
 // GetVoucherByBrand is a function to get voucher by brand

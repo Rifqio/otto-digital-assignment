@@ -47,8 +47,17 @@ func (v VoucherService) CreateVoucher(data dto.CreateVoucherRequest) error {
 }
 
 // GetVoucher is a function to get voucher
-func (v VoucherService) GetVoucher(id int) error {
-	return nil
+func (v VoucherService) GetVoucher(id int) (*repositories.Voucher, error) {
+	voucher, err := v.voucherRepository.FindVoucherByID(id)
+	if err != nil {
+		return nil, err
+	}
+
+	if voucher == nil {
+		return nil, errors.New("voucher not found")
+	}
+
+	return voucher, nil
 }
 
 // GetVoucherByBrand is a function to get voucher by brand

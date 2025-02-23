@@ -80,3 +80,13 @@ func (b VoucherRepository) FindVouchersByCodes(codes []string) ([]Voucher, error
 	}
 	return vouchers, nil
 }
+
+// FindVoucherByID is a function to find voucher by ID
+func (b VoucherRepository) FindVoucherByID(id int) (*Voucher, error) {
+	var voucher Voucher
+	result := b.db.Where("id = ?", id).First(&voucher)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &voucher, nil
+}
