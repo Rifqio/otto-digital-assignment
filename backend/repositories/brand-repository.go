@@ -15,20 +15,24 @@ type Brand struct {
 	UpdatedAt time.Time `json:"updatedAt"`
 }
 
-// BrandRepository is a struct to represent repository of brand
-type BrandRepository struct {
+// BrandRepository is a interface to represent repository of brand
+type BrandRepository interface {
+	InsertBrand(data dto.CreateBrandRequest) error
+	FindBrandByName(name string) (*Brand, error)
+	FindBrandByID(id int) (*Brand, error)
+}
+
+type brandRepositoryImpl struct {
 	db *gorm.DB
 }
 
 // NewBrandRepository is a function to create new BrandRepository
 func NewBrandRepository(db *gorm.DB) BrandRepository {
-	return BrandRepository{
-		db: db,
-	}
+	return &brandRepositoryImpl{db: db}
 }
 
 // InsertBrand is a function to insert brand
-func (b BrandRepository) InsertBrand(data dto.CreateBrandRequest) error {
+func (b *brandRepositoryImpl) InsertBrand(data dto.CreateBrandRequest) error {
 	brand := Brand{
 		Name:      data.BrandName,
 		CreatedAt: time.Now(),
@@ -43,7 +47,7 @@ func (b BrandRepository) InsertBrand(data dto.CreateBrandRequest) error {
 }
 
 // FindBrandByName is a function to find brand by name
-func (b BrandRepository) FindBrandByName(name string) (*Brand, error) {
+func (b *brandRepositoryImpl) FindBrandByName(name string) (*Brand, error) {
 	var brand Brand
 	err := b.db.Where("name = ?", name).First(&brand).Error
 	if err != nil {
@@ -56,7 +60,7 @@ func (b BrandRepository) FindBrandByName(name string) (*Brand, error) {
 }
 
 // FindBrandByID is a function to find brand by id
-func (b BrandRepository) FindBrandByID(id int) (*Brand, error) {
+func (b *brandRepositoryImpl) FindBrandByID(id int) (*Brand, error) {
 	var brand Brand
 	err := b.db.Where("id = ?", id).First(&brand).Error
 	if err != nil {
