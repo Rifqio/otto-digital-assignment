@@ -8,6 +8,6 @@ type VoucherRedeem struct {
 
 // CreateTransactionRequest is a struct to represent request payload to create transaction
 type CreateTransactionRequest struct {
-	CustomerID int             `json:"customerId"`
-	Vouchers   []VoucherRedeem `json:"vouchers"`
+	CustomerEmail string          `json:"customerEmail"`
+	Vouchers      []VoucherRedeem `json:"vouchers"`
 }

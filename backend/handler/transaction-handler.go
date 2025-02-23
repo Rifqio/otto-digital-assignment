@@ -2,6 +2,7 @@ package handler
 
 import (
 	"strconv"
+	"strings"
 	"voucher-app/dto"
 	"voucher-app/service"
 	"voucher-app/utils"
@@ -22,16 +23,26 @@ func NewTransactionHandler(transactionService *service.TransactionService) *Tran
 // CreateRedemptionTransaction is a function to create redemption transaction
 func (t *TransactionHandler) CreateRedemptionTransaction(e echo.Context) error {
 	var req dto.CreateTransactionRequest
+
 	if err := e.Bind(&req); err != nil {
+		return utils.ErrorResponse(e, 400, "invalid request payload")
+	}
+
+	if err := e.Validate(req); err != nil {
 		return utils.ErrorResponse(e, 400, err.Error())
 	}
 
 	err := t.transactionService.CreateRedemptionTransaction(req)
 	if err != nil {
-		return utils.ErrorResponse(e, 500, err.Error())
+		if strings.Contains(err.Error(), "not found") {
+			return utils.ErrorResponse(e, 404, err.Error())
+		} else if strings.Contains(err.Error(), "invalid") {
+			return utils.ErrorResponse(e, 400, err.Error())
+		}
+		return utils.ErrorResponse(e, 500, "failed to process transaction")
 	}
 
-	return utils.CreatedResponse(e, "Redemption transaction created")
+	return utils.CreatedResponse(e, "Redemption transaction created successfully")
 }
 
 // GetRedemptionTransactionDetail is a function to get redemption transaction detail

@@ -70,3 +70,13 @@ func (b VoucherRepository) FindVoucherByBrand(brandID int) (*Voucher, error) {
 
 	return &voucher, nil
 }
+
+// FindVouchersByCodes retrieves multiple vouchers based on a slice of voucher codes.
+func (b VoucherRepository) FindVouchersByCodes(codes []string) ([]Voucher, error) {
+	var vouchers []Voucher
+	result := b.db.Where("code IN (?)", codes).Find(&vouchers)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return vouchers, nil
+}
