@@ -42,9 +42,23 @@ func (b BrandRepository) InsertBrand(data dto.CreateBrandRequest) error {
 	return nil
 }
 
+// FindBrandByName is a function to find brand by name
 func (b BrandRepository) FindBrandByName(name string) (*Brand, error) {
 	var brand Brand
 	err := b.db.Where("name = ?", name).First(&brand).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &brand, nil
+}
+
+// FindBrandByID is a function to find brand by id
+func (b BrandRepository) FindBrandByID(id int) (*Brand, error) {
+	var brand Brand
+	err := b.db.Where("id = ?", id).First(&brand).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, nil

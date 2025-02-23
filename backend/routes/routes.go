@@ -25,7 +25,7 @@ func MakeRouter(db *gorm.DB) Router {
 	brandService := service.NewBrandService(db)
 	brandHandler := handler.NewBrandHandler(brandService)
 
-	voucherService := service.NewVoucherService()
+	voucherService := service.NewVoucherService(db)
 	voucherHandler := handler.NewVoucherHandler(voucherService)
 
 	transactionService := service.NewTransactionService()

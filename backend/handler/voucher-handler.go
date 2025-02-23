@@ -26,8 +26,20 @@ func (v *VoucherHandler) CreateVoucher(e echo.Context) error {
 		return utils.ErrorResponse(e, 400, err.Error())
 	}
 
-	err := v.voucherService.CreateVoucher()
+	if err := e.Validate(req); err != nil {
+		return utils.ErrorResponse(e, 400, err.Error())
+	}
+
+	err := v.voucherService.CreateVoucher(req)
 	if err != nil {
+		if err.Error() == "brand not found" {
+			return utils.ErrorResponse(e, 404, err.Error())
+		}
+
+		if err.Error() == "voucher already exists" {
+			return utils.ErrorResponse(e, 400, err.Error())
+		}
+
 		return utils.ErrorResponse(e, 500, err.Error())
 	}
 	return utils.CreatedResponse(e, "Voucher created")
