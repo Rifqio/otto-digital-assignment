@@ -5,6 +5,7 @@ import (
 	"voucher-app/service"
 
 	"github.com/labstack/echo/v4"
+	"gorm.io/gorm"
 )
 
 // Router defines the router structure
@@ -20,8 +21,8 @@ type Router struct {
 }
 
 // MakeRouter creates a new router
-func MakeRouter() Router {
-	brandService := service.NewBrandService()
+func MakeRouter(db *gorm.DB) Router {
+	brandService := service.NewBrandService(db)
 	brandHandler := handler.NewBrandHandler(brandService)
 
 	voucherService := service.NewVoucherService()

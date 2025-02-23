@@ -25,9 +25,16 @@ func (b *BrandHandler) CreateBrand(c echo.Context) error {
 		return utils.ErrorResponse(c, 400, err.Error())
 	}
 
+	if err := c.Validate(req); err != nil {
+		return utils.ErrorResponse(c, 400, err.Error())
+	}
+
 	err := b.brandService.CreateBrand(req)
 	if err != nil {
-		return utils.ErrorResponse(c, 500, err.Error())
+		if err.Error() == "brand name cannot be empty" || err.Error() == "brand already exists" {
+			return utils.ErrorResponse(c, 400, err.Error())
+		}
+		return utils.ErrorResponse(c, 500, "failed to create brand")
 	}
 
 	return utils.SuccessResponse(c, "Brand created", nil)
