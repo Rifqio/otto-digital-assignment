@@ -19,6 +19,10 @@ This project follows a structured approach to organizing Go code, making it easy
 ├── main.go        # Application entry point
 ├── README.md      # Project documentation
 ```
+
+## Database Schema
+Provided in the folder database and in the file schema.png
+
 ## Local Installation
 Prerequisites
 
