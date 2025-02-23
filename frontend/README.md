@@ -12,6 +12,11 @@ Run the dev server
   npm run dev
 ```
 
+To run the unit test
+```bash
+  npm run test
+```
+
 Access the page on http://localhost:3000
 
 ## Installation Guides Docker
