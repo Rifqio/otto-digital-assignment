@@ -6,6 +6,7 @@ import (
 	"os"
 	"voucher-app/routes"
 
+	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -15,9 +16,13 @@ import (
 var db *gorm.DB
 
 func main() {
-	dsn := "root@tcp(127.0.0.1:3306)/vouchers?charset=utf8mb4&parseTime=True&loc=Local"
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 
-	var err error
+	dsn := os.Getenv("DATABASE_URL") // "{user}:{password}@tcp(127.0.0.1:3306)/{dbname}?charset=utf8mb4&parseTime=True&loc=Local"
+
 	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Silent),
 	})
